@@ -1,0 +1,34 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+.expensesform {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+}
+table #addedexpenselist {
+  display: flex;
+  justify-content: center;
+  max-width: 500px;
+}
+button .text-primary {
+  margin: auto 2px auto 8px;
+}
+#tableitems {
+  margin-left: auto;
+  margin-right: auto;
+  width: fit-content;
+}
+.btn-success {
+  margin-top: 15px;
+}
+.expbtns {
+  padding: 1px 5px 1px 5px;
+  margin: 0px 1px 0px 20vw;
+}
+.expbtns2 {
+  padding: 1px 5px 1px 5px;
+}
