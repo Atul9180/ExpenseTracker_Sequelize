@@ -20,11 +20,7 @@ const UserModel = sequelize.define('users_tb',{
       password: {
         type: Sequelize.STRING,
         allowNull: false,
-      },
-      date: {
-        type: Sequelize.DATE,
-        defaultValue: new Date(),
-      },
+      }
 })
 
   

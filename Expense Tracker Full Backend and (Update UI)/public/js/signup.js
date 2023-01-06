@@ -5,40 +5,16 @@ document.getElementById('signup-form').addEventListener('submit', e=>{
     const email = e.target.emailInput.value;
     const password = e.target.passwordInput.value;
 
-    if(!name || !email || !password) return;
-    
+    if(!name || !email || !password){ 
+      document.querySelector('#Output').innerText= "All fields mandatory.!"
+      alertAwakeSleep();
+      return ;
+    };    
     addNewUser(name,email,password);
 })
 
-// async function addNewUser(name,email,password){
-//     try {
-//         const obj = {
-//             name:name,
-//             email:email,
-//             password:password
-//         }; 
-//         const response = await axios.post("http://localhost:4000/user/signup", obj);
-//         if(response.status === 201){
-//           console.log("server returned 201",response.data.UserAddedResponse)
-//           //document.getElementById('output').innerText = "User Created Successfully";
-          
-//           window.location.href = "/public/view/login.html"
-//         }
-//         else{
-//           console.warn("server returned error: user exists")
-//           document.getElementById('output').innerText = "User Already exists. Please login.";
-//           throw new Error("User Already Exists");
-//         }
-//         // call function to show newly added expense on the screen
-//        // document.getElementById('output').innerText = "User Added Successfully";
-//       } catch (err) {
-//           console.log("server hit error ",err);
-//           document.querySelector('#output').innerText=`Server error- ${err} ,in creating new account. Please Refresh the Page.`;
-//           document.querySelector('#error-alert').classList.toggle("hidden")
-//       }
-//     }
 
-
+// function to request post data to db
 async function addNewUser(name,email,password){
   try {
     const obj = {
@@ -48,15 +24,27 @@ async function addNewUser(name,email,password){
     }; 
     const response = await axios.post("http://localhost:4000/user/signup", obj);
     if(response.status === 201){
-      console.log("server returned 201",response.data.UserAddedResponse)
+      //console.log("server returned 201",response.data.UserAddedResponse)
       window.location.href = "/public/view/login.html"
     }
+    else if(response.status === 400){
+      document.querySelector('#Output').innerText= "All fields mandatory.!"
+      alertAwakeSleep();
+    }    
     else{
       throw new Error("Error creating user");
     }
   } catch (err) {
       //console.log("server hit error ",err);
-      document.querySelector('#Output').innerText= "Email Already Exists. Please Login.;"
-      document.querySelector('#error-alert').classList.toggle("hidden")
+      document.querySelector('#Output').innerText= "Email Already Exists. Please Login.!"
+      alertAwakeSleep();
   }
+}
+
+// function to awake/sleep alert
+function alertAwakeSleep(){
+      document.querySelector('#error-alert').classList.toggle("hidden");
+      setTimeout(function() {
+        document.getElementById("error-alert").classList.toggle("hidden");
+      }, 1500);
 }
