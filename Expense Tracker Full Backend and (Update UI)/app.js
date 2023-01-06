@@ -15,11 +15,17 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 //importing routes
 const adminRoute = require('./routes/adminRoutes');
+const userRoute = require('./routes/userRoutes');
 
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public/view/signup.html'));
+  });
+  
 
 
 //registering routes to app
 app.use(adminRoute); 
+app.use(userRoute); 
 
 
 sequelize.sync()
