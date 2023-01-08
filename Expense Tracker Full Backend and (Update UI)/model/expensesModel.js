@@ -22,5 +22,6 @@ const ExpenseTrackerModel = sequelize.define('user_expenses_tb',{
     }
 })
 
-  
+ 
+
 module.exports = ExpenseTrackerModel;

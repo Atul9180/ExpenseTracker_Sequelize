@@ -11,7 +11,8 @@ async function saveToDb(event) {
   let category = event.target.addexpensecategory.value;
   const obj = { amount, description, category };
   try{
-    const res = await axios.post("http://localhost:4000/admin/addNewExpense", obj);
+    const token = localStorage.getItem('token')
+    const res = await axios.post("http://localhost:4000/admin/addNewExpense", obj,{headers:{Authorization:`${token}`}});
       showexpenses(res.data.newAddedExpense);
       document.getElementById("success-alert").innerText = "Expense added Successfully!"
       awakeSuccessAlert();
@@ -26,9 +27,10 @@ async function saveToDb(event) {
 
 
 // DOM ContentLoader on page load
-document.addEventListener("DOMContentLoaded", async () => {
+window.addEventListener("DOMContentLoaded", async () => {
   try{
-    const res = await axios.get("http://localhost:4000/admin/getAllExpenses");
+    const token = localStorage.getItem('token')
+    const res = await axios.get("http://localhost:4000/admin/getAllExpenses",{headers:{Authorization:`${token}`}});
       for (var i = 0; i < res.data.allExpenses.length; i++) 
               showexpenses(res.data.allExpenses[i]);
     }
@@ -93,7 +95,8 @@ async function updateUser(expId) {
   let category = addexpensecategory.value;
   const obj = { amount, description, category };
   try{
-    const res1 = await axios.put(`http://localhost:4000/admin/updateExpense/${expId}`, obj);
+    const token = localStorage.getItem('token')
+    const res1 = await axios.put(`http://localhost:4000/admin/updateExpense/${expId}`,obj,{headers:{Authorization:`${token}`}});
       if(res1){
       document.getElementById("success-alert").innerText="Expense Updation Successful.";
       awakeSuccessAlert();
@@ -111,7 +114,8 @@ async function updateUser(expId) {
       document.querySelector('#error-alert').classList.toggle("hidden")
     }
   try{
-    const result2 = await axios.get(`http://localhost:4000/admin/getExpenseById/${expId}`)
+    const token = localStorage.getItem('token')
+    const result2 = await axios.get(`http://localhost:4000/admin/getExpenseById/${expId}`,{headers:{Authorization:`${token}`}})
           showexpenses(result2.data.updatedUserExpense);
     }
     catch(err){
@@ -140,7 +144,8 @@ async function removeExpenseFromScreen(expId) {
 // deleteexpense from crudcrud
 async function deleteexpense(expId) {
   try{
-    await axios.delete(`http://localhost:4000/admin/deleteExpense/${expId}`)
+    const token = localStorage.getItem('token')
+    await axios.delete(`http://localhost:4000/admin/deleteExpense/${expId}`,{headers:{Authorization:`${token}`}})
     removeExpenseFromScreen(expId);    
     document.getElementById("deletion-alert").innerText="Expense deleted Successfully!";
     awakeDeletedAlert();
@@ -155,7 +160,7 @@ async function deleteexpense(expId) {
 
 // err-alert close button:
 document.getElementById("close-button").addEventListener("click", function() {
-  document.getElementById("alert").remove();
+  document.getElementById("error-alert").remove();
   window.location.reload();
 });
 

@@ -5,21 +5,27 @@ const bodyParser =require('body-parser')
 const sequelize = require('./utils/database')
 const path = require('path')
 
+//models
+const User =require('./model/usersModel')
+const Expense =require('./model/expensesModel')
 
 //middlewares
 app.use(cors())
 app.use(express.json())
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use("/js",express.static(path.join(__dirname, '/public/js')));
+
 
 
 //importing routes
 const adminRoute = require('./routes/adminRoutes');
 const userRoute = require('./routes/userRoutes');
 
+
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/view/signup.html'));
-  });
+});
   
 
 
@@ -28,7 +34,13 @@ app.use(adminRoute);
 app.use(userRoute); 
 
 
-sequelize.sync()
+//Associations
+User.hasMany(Expense);
+Expense.belongsTo(User,{Constraints: true, onDelete: "CASCADE"});
+
+
+
+sequelize.sync('force:true')
     .then(res=>{ app.listen(4000)})
     .catch(err=>console.log(err))
 

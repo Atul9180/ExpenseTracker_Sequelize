@@ -9,7 +9,7 @@ document.getElementById("login-form").addEventListener("submit", (e) => {
     return;
   }
   authenticateLogin(email, password);
-  //empty back form filled:
+  //empty back form :
   e.target.email.value = "";
   e.target.password.value = "";
 });
@@ -24,15 +24,20 @@ async function authenticateLogin(email, password) {
     if (response.status === 200) {
       //console.log("line 25 loginjs: ",response.data.user)
       alert(response.data.message);
-      document.querySelector("#successAlert").innerText = `Hi, ${response.data.user.name}. Login Successful`;
-      successAlertAwakeSleep();
+      console.log("loginjs line 27>>: ",response.data)
+     // document.querySelector("#successAlert").innerText = `Hi, ${response.data.token}. Login Successful`;
+     // successAlertAwakeSleep();
+      // Set JWT as a cookie or localstorage
+      //document.cookie = `jwt=${response.data.token}`;
+      localStorage.setItem('token',response.data.token)
+      
       // Redirect to home page
-      window.location.href = '../view/home.html';
+     window.location.href = "/public/view/home.html";
     } else {
       throw new Error("Error in credentials");
     }
   } catch (err) {
-    console.log("error from loginjs catch: ",err)
+    //console.log("error from loginjs catch: ",err)
     document.querySelector("#errorAlert").innerText = `${err.response.data.message}`;
     alertAwakeSleep();
   }

@@ -1,5 +1,10 @@
 const UserModel = require("../model/usersModel");
 const bcrypt = require("bcrypt");
+const jwt = require('jsonwebtoken');
+
+//secret key
+const secretKey = '@9180!-secret$@!^%(#)-key#75*';
+
 
 //Signup Page Controller
 exports.createNewUserController = async (req, res) => {
@@ -25,6 +30,10 @@ exports.createNewUserController = async (req, res) => {
 };
 
 
+//function generateAccessToken ...has(payload,secretkey) encrypt payload using secret key
+function generateAccessToken(id,name){
+  return jwt.sign({userId:id, name:name},'587789180#%^#%#vf77')
+}
 
 //Login Page Controller
 exports.authenticateUserController = async (req, res) => {
@@ -33,6 +42,7 @@ exports.authenticateUserController = async (req, res) => {
     if (!email || !password) {
       return res.status(400).json({ message: "All fields are mandatory" });
     }
+
     const user = await UserModel.findOne({ where: { email } });
     if (user) {
       await bcrypt.compare(password, user.password, (hasherr, hashresponse) => {
@@ -40,7 +50,11 @@ exports.authenticateUserController = async (req, res) => {
           throw new Error("Something went wrong in authentication");
         }
         if (hashresponse == true) {
-          return res.status(200).json({ user, message: "User Logged in successfully" });
+          // Generate JWT
+          //const token = jwt.sign({ user.id }, secretKey);
+          // Send JWT to client
+          return res.status(200).json({ success:true,message: "User logged in successfully", token: generateAccessToken(user.id,user.name) });
+          //return res.status(200).json({ user, message: "User Logged in successfully" });
         } 
         else if(hashresponse == false) {
           return res.status(401).json({ message: "User not authorized. Password Incorrect." });
