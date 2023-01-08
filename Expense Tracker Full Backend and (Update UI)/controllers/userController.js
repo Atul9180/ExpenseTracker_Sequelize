@@ -37,7 +37,7 @@ exports.authenticateUserController = async (req, res) => {
     if (user) {
       await bcrypt.compare(password, user.password, (hasherr, hashresponse) => {
         if(hasherr){
-          return res.status(500).json({ success:false,message: "Something went wrong in authentication" });
+          throw new Error("Something went wrong in authentication");
         }
         if (hashresponse == true) {
           return res.status(200).json({ user, message: "User Logged in successfully" });

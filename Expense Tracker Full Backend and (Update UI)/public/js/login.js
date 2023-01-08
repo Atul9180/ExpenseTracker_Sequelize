@@ -26,7 +26,8 @@ async function authenticateLogin(email, password) {
       alert(response.data.message);
       document.querySelector("#successAlert").innerText = `Hi, ${response.data.user.name}. Login Successful`;
       successAlertAwakeSleep();
-      //window.location.href = "/public/view/home.html"
+      // Redirect to home page
+      window.location.href = '../view/home.html';
     } else {
       throw new Error("Error in credentials");
     }
