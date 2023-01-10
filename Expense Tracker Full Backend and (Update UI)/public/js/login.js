@@ -24,7 +24,7 @@ async function authenticateLogin(email, password) {
     if (response.status === 200) {
       //console.log("line 25 loginjs: ",response.data.user)
       alert(response.data.message);
-      console.log("loginjs line 27>>: ",response.data)
+      //console.log("loginjs line 27>>: ",response.data)
      // document.querySelector("#successAlert").innerText = `Hi, ${response.data.token}. Login Successful`;
      // successAlertAwakeSleep();
       // Set JWT as a cookie or localstorage

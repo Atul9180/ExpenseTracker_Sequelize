@@ -1,9 +1,10 @@
 const UserModel = require("../model/usersModel");
 const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken');
+require('dotenv').config();
 
 //secret key
-const secretKey = '@9180!-secret$@!^%(#)-key#75*';
+const secretKey = '587789180#%^#%#vf77';  //replace wity .env and line 35
 
 
 //Signup Page Controller

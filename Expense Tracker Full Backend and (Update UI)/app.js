@@ -1,13 +1,19 @@
 const express = require('express')
 const app = express()
+require('dotenv').config()
 var cors = require('cors')
 const bodyParser =require('body-parser')
 const sequelize = require('./utils/database')
 const path = require('path')
 
+
 //models
 const User =require('./model/usersModel')
 const Expense =require('./model/expensesModel')
+const Order = require('./model/ordersModel')
+
+
+
 
 //middlewares
 app.use(cors())
@@ -21,6 +27,8 @@ app.use("/js",express.static(path.join(__dirname, '/public/js')));
 //importing routes
 const adminRoute = require('./routes/adminRoutes');
 const userRoute = require('./routes/userRoutes');
+const orderRoute = require('./routes/purchaseRoutes');
+
 
 
 app.get('/', (req, res) => {
@@ -32,17 +40,21 @@ app.get('/', (req, res) => {
 //registering routes to app
 app.use(adminRoute); 
 app.use(userRoute); 
+app.use(orderRoute); 
 
 
 //Associations
-User.hasMany(Expense);
+User.hasMany(Expense,{foreignKey: 'usersTbId', onDelete:'CASCADE'});
 Expense.belongsTo(User,{Constraints: true, onDelete: "CASCADE"});
 
+User.hasMany(Order,{foreignKey: 'usersTbId',sourceKey: 'id', onDelete:'CASCADE'})
+Order.belongsTo(User,{Constraints: true, onDelete: "CASCADE"})
 
 
-sequelize.sync('force:true')
-    .then(res=>{ app.listen(4000)})
-    .catch(err=>console.log(err))
+
+sequelize.sync()
+    .then(res=>{ app.listen(process.env.PORT) })
+    .catch(err=>console.log("error in connection..",err))
 
 
 

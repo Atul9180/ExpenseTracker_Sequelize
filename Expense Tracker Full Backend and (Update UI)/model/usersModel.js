@@ -20,7 +20,11 @@ const UserModel = sequelize.define('users_tb',{
       password: {
         type: Sequelize.STRING,
         allowNull: false,
-      }
+      },
+      ispremiumuser: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false
+    }
 })
 
   

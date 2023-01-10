@@ -1,9 +1,12 @@
+// const { default: axios } = require("axios");
+
 let addexpenseinput = document.getElementById("addexpenseinput");
 let addexpensedescription = document.getElementById("addexpensedescription");
 let addexpensecategory = document.getElementById("addexpensecategory");
 let addexpensebtn = document.getElementById("addexpensebtn");
 let updateexpensebtn = document.getElementById("updateexpensebtn");
 
+//Adding new Expenses to Db
 async function saveToDb(event) {
   event.preventDefault();
   let amount = event.target.addexpenseinput.value;
@@ -30,6 +33,10 @@ async function saveToDb(event) {
 window.addEventListener("DOMContentLoaded", async () => {
   try{
     const token = localStorage.getItem('token')
+    if(!token){
+      alert("You meed to Login first..!")
+      return window.location.href='../view/login.html'
+    }
     const res = await axios.get("http://localhost:4000/admin/getAllExpenses",{headers:{Authorization:`${token}`}});
       for (var i = 0; i < res.data.allExpenses.length; i++) 
               showexpenses(res.data.allExpenses[i]);
@@ -141,7 +148,7 @@ async function removeExpenseFromScreen(expId) {
 
 
 
-// deleteexpense from crudcrud
+// deleteexpense from db
 async function deleteexpense(expId) {
   try{
     const token = localStorage.getItem('token')
@@ -156,6 +163,73 @@ async function deleteexpense(expId) {
       document.querySelector('#error-alert').classList.toggle("hidden")
     }
 }
+
+
+document.getElementById("buyPremiumBtn").addEventListener("click", async function (e) {
+  try {
+    // Get the token from local storage
+    const token = localStorage.getItem('token');
+
+    // Make a GET request to the server to create the order and get the payment credentials
+    const response =await  axios.get("http://localhost:4000/purchase/premiumMember", { headers: { Authorization: `${token}` } });
+
+    // Create the payment handler function
+    var paymentcreds ={ 
+      "key": response.data.key_id,
+            "order_id": response.data.order.id,
+            "handler": async function (response){
+      try {
+        // Make a POST request to update the transaction status
+        await axios.post("http://localhost:4000/purchase/updateTransactionStatus", {
+          order_id: paymentcreds.order_id,
+          payment_id: response.razorpay_payment_id,
+        }, { headers: { Authorization: token } });
+
+        // Update the UI and show a success message
+        document.getElementById("buyPremiumBtn").innerText = "You are a premium member now";
+        document.getElementById("buyPremiumBtn").classList.add('disabled');
+        alert('Your Premium Membership is now active');
+        //window.location.reload(); 
+      }
+      catch (err) {
+        // Handle the error
+        console.error(err);
+        alert('trans failed line 197 Something went wrong. Please try again.');
+        throw new Error(err);
+      }
+    }
+    }
+  
+    // Create the Razorpay instance and open the payment modal
+    const rzpl = new Razorpay(paymentcreds);
+    rzpl.open();
+    e.preventDefault();
+
+    // Add an event listener to handle payment failure
+    rzpl.on('payment.failed', async (response) => {
+      try{
+        console.log("payment failed res on line 210>> ", response.error.description);
+        console.log("Order ID: line 210 ", response.error.metadata.order_id);
+        console.log("Payment ID: ", response.error.metadata.payment_id);
+        const orderId = response.error.metadata.order_id
+        const paymentId = response.error.metadata.payment_id
+        alert(`Alert: ${response.error.description}`)
+        } catch (error) {
+            console.log(error)
+            alert(`Payment failed due to ${error.error.description}`);
+            //window.location.reload();
+        }
+    });
+  } catch (err) {
+    // Handle the error
+    console.error(err);
+    alert('Something went wrong last line. Please try again.');
+    throw new Error(err);
+  }
+});
+
+    
+
 
 
 // err-alert close button:
