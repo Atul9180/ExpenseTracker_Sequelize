@@ -22,22 +22,14 @@ async function authenticateLogin(email, password) {
     const obj = { email, password };
     const response = await axios.post("http://localhost:4000/user/login", obj);
     if (response.status === 200) {
-      //console.log("line 25 loginjs: ",response.data.user)
       alert(response.data.message);
-      //console.log("loginjs line 27>>: ",response.data)
-     // document.querySelector("#successAlert").innerText = `Hi, ${response.data.token}. Login Successful`;
-     // successAlertAwakeSleep();
-      // Set JWT as a cookie or localstorage
-      //document.cookie = `jwt=${response.data.token}`;
-      localStorage.setItem('token',response.data.token)
-      
+      localStorage.setItem('token',response.data.token)            
       // Redirect to home page
      window.location.href = "/public/view/home.html";
     } else {
       throw new Error("Error in credentials");
     }
   } catch (err) {
-    //console.log("error from loginjs catch: ",err)
     document.querySelector("#errorAlert").innerText = `${err.response.data.message}`;
     alertAwakeSleep();
   }
@@ -60,3 +52,6 @@ function successAlertAwakeSleep() {
     document.getElementById("successAlert").classList.toggle("hidden");
   }, 3000);
 }
+
+
+

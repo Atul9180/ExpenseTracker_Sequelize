@@ -1,10 +1,9 @@
-// const { default: axios } = require("axios");
-
 let addexpenseinput = document.getElementById("addexpenseinput");
 let addexpensedescription = document.getElementById("addexpensedescription");
 let addexpensecategory = document.getElementById("addexpensecategory");
 let addexpensebtn = document.getElementById("addexpensebtn");
 let updateexpensebtn = document.getElementById("updateexpensebtn");
+
 
 //Adding new Expenses to Db
 async function saveToDb(event) {
@@ -29,13 +28,83 @@ async function saveToDb(event) {
 
 
 
+//jwt token parser
+function parseJwt (token) {
+  var base64Url = token.split('.')[1];
+  var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+  var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+  }).join(''));
+
+  return JSON.parse(jsonPayload);
+}
+
+
+//Premium user Message:
+function premiumUserMsg(){
+  document.getElementById("buyPremiumBtn").remove();
+  document.getElementById("memtype").innerText = "You are a premium member now";
+}
+
+let tableVisible = false;
+function showLeaderBoard(){
+  var inputBtnElement = document.createElement("button")
+  inputBtnElement.type = "button"
+  inputBtnElement.id = "leaderbtn"
+  inputBtnElement.innerText = "Show LeaderBoard"
+  inputBtnElement.className = "rounded-lg py-2  bg-[#3ebc96] text-white max-w-full px-8 hover:scale-105 duration-300 hover:bg-[#0d5f49] cursor-pointer"
+  
+  inputBtnElement.onclick = async() =>{
+    try{
+    const token = localStorage.getItem('token')
+    const leaderBoardData = await axios.get("http://localhost:4000/premium/showLeaderBoard",{headers:{Authorization: token}});
+    //console.log(leaderBoardData.data)
+    
+    var leaderBoardElement = document.getElementById("addedLeaderBoardlist")
+  
+  if(!tableVisible){
+    document.getElementById("leaderBoardTable").classList.toggle("hidden");
+    leaderBoardData.data.forEach(leadersDetails => {
+       leaderBoardElement.innerHTML += `<tr class=" text-sm hover:bg-gray-100">
+          <td class="py-2 px-3 border-b border-gray-400">${leadersDetails.users_tb.name}</td>
+          <td class="py-2 px-3 border-b border-gray-400"><span class="font-bold">&#x20b9; </span>${leadersDetails.aggregated_sum}</td>
+        </tr>`
+    });;
+    tableVisible = true;
+  }
+  else{
+    document.getElementById("leaderBoardTable").classList.toggle("hidden");
+      leaderBoardElement.innerHTML = "";
+      tableVisible = false;
+  }
+  }
+  catch(error){
+    console.log(error)
+    throw new Error(error)
+  }
+}
+  document.getElementById("leaderBtnHolder").appendChild(inputBtnElement);
+}
+
+
+
+
+
+
 // DOM ContentLoader on page load
 window.addEventListener("DOMContentLoaded", async () => {
   try{
     const token = localStorage.getItem('token')
+    const tokenDecoded = parseJwt(token);
+    const premiumMember = tokenDecoded.ispremiumuser;
+
     if(!token){
-      alert("You meed to Login first..!")
+      alert("You need to Login first..!")
       return window.location.href='../view/login.html'
+    }
+    if(premiumMember){
+      premiumUserMsg();
+      showLeaderBoard();
     }
     const res = await axios.get("http://localhost:4000/admin/getAllExpenses",{headers:{Authorization:`${token}`}});
       for (var i = 0; i < res.data.allExpenses.length; i++) 
@@ -165,13 +234,12 @@ async function deleteexpense(expId) {
 }
 
 
+
+//====buy premium=====
 document.getElementById("buyPremiumBtn").addEventListener("click", async function (e) {
   try {
-    // Get the token from local storage
     const token = localStorage.getItem('token');
-
-    // Make a GET request to the server to create the order and get the payment credentials
-    const response =await  axios.get("http://localhost:4000/purchase/premiumMember", { headers: { Authorization: `${token}` } });
+    const response =await  axios.get("http://localhost:4000/purchase/premiumMember", { headers: { Authorization: token } });
 
     // Create the payment handler function
     var paymentcreds ={ 
@@ -180,39 +248,30 @@ document.getElementById("buyPremiumBtn").addEventListener("click", async functio
             "handler": async function (response){
       try {
         // Make a POST request to update the transaction status
-        await axios.post("http://localhost:4000/purchase/updateTransactionStatus", {
+        const res = await axios.post("http://localhost:4000/purchase/updateTransactionStatus", {
           order_id: paymentcreds.order_id,
           payment_id: response.razorpay_payment_id,
         }, { headers: { Authorization: token } });
-
-        // Update the UI and show a success message
-        document.getElementById("buyPremiumBtn").innerText = "You are a premium member now";
-        document.getElementById("buyPremiumBtn").classList.add('disabled');
-        alert('Your Premium Membership is now active');
+        
+        premiumUserMsg();
+        alert('Your Premium Membership is now active'); 
+        localStorage.setItem('token',res.data.token)
+        showLeaderBoard();      
         //window.location.reload(); 
       }
       catch (err) {
-        // Handle the error
         console.error(err);
-        alert('trans failed line 197 Something went wrong. Please try again.');
         throw new Error(err);
       }
     }
-    }
-  
+    };  
+
     // Create the Razorpay instance and open the payment modal
     const rzpl = new Razorpay(paymentcreds);
     rzpl.open();
     e.preventDefault();
-
-    // Add an event listener to handle payment failure
     rzpl.on('payment.failed', async (response) => {
       try{
-        console.log("payment failed res on line 210>> ", response.error.description);
-        console.log("Order ID: line 210 ", response.error.metadata.order_id);
-        console.log("Payment ID: ", response.error.metadata.payment_id);
-        const orderId = response.error.metadata.order_id
-        const paymentId = response.error.metadata.payment_id
         alert(`Alert: ${response.error.description}`)
         } catch (error) {
             console.log(error)
@@ -221,15 +280,18 @@ document.getElementById("buyPremiumBtn").addEventListener("click", async functio
         }
     });
   } catch (err) {
-    // Handle the error
-    console.error(err);
+    console.log(err);
     alert('Something went wrong last line. Please try again.');
     throw new Error(err);
   }
 });
 
-    
-
+  
+//logout
+document.getElementById('logoutBtn').addEventListener('click',function(){
+  localStorage.removeItem('token')
+  return window.location.href='../view/login.html'
+})
 
 
 // err-alert close button:

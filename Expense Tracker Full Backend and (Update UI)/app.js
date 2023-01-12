@@ -28,6 +28,7 @@ app.use("/js",express.static(path.join(__dirname, '/public/js')));
 const adminRoute = require('./routes/adminRoutes');
 const userRoute = require('./routes/userRoutes');
 const orderRoute = require('./routes/purchaseRoutes');
+const premiumUserRoutes = require('./routes/premiumFeaturesRoutes')
 
 
 
@@ -41,6 +42,7 @@ app.get('/', (req, res) => {
 app.use(adminRoute); 
 app.use(userRoute); 
 app.use(orderRoute); 
+app.use('/premium',premiumUserRoutes)
 
 
 //Associations

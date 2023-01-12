@@ -3,12 +3,9 @@ const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
-//secret key
-const secretKey = '587789180#%^#%#vf77';  //replace wity .env and line 35
-
 
 //Signup Page Controller
-exports.createNewUserController = async (req, res) => {
+const createNewUserController = async (req, res) => {
   try {
     const { name, email, password } = req.body;
     if (!name || !email || !password) {
@@ -31,13 +28,16 @@ exports.createNewUserController = async (req, res) => {
 };
 
 
+
 //function generateAccessToken ...has(payload,secretkey) encrypt payload using secret key
-function generateAccessToken(id,name){
-  return jwt.sign({userId:id, name:name},'587789180#%^#%#vf77')
+const generateAccessToken = (id,name,ispremiumuser)=>{
+  return jwt.sign({userId:id, name:name, ispremiumuser},process.env.JWT_SECRET_KEY)
 }
 
+
+
 //Login Page Controller
-exports.authenticateUserController = async (req, res) => {
+const authenticateUserController = async (req, res) => {
   try {
     const { email, password } = req.body;
     if (!email || !password) {
@@ -50,12 +50,8 @@ exports.authenticateUserController = async (req, res) => {
         if(hasherr){
           throw new Error("Something went wrong in authentication");
         }
-        if (hashresponse == true) {
-          // Generate JWT
-          //const token = jwt.sign({ user.id }, secretKey);
-          // Send JWT to client
-          return res.status(200).json({ success:true,message: "User logged in successfully", token: generateAccessToken(user.id,user.name) });
-          //return res.status(200).json({ user, message: "User Logged in successfully" });
+        if (hashresponse == true) {          
+          return res.status(200).json({ success:true,message: "User logged in successfully", token: generateAccessToken(user.id, user.name, user.ispremiumuser) });
         } 
         else if(hashresponse == false) {
           return res.status(401).json({ message: "User not authorized. Password Incorrect." });
@@ -68,3 +64,8 @@ exports.authenticateUserController = async (req, res) => {
     return res.status(500).json({ error });
   }
 };
+
+module.exports ={ createNewUserController ,
+  generateAccessToken  ,
+  authenticateUserController
+}
