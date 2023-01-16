@@ -7,10 +7,12 @@ const sequelize = require('./utils/database')
 const path = require('path')
 
 
+
 //models
 const User =require('./model/usersModel')
 const Expense =require('./model/expensesModel')
 const Order = require('./model/ordersModel')
+const Forgotpassword = require('./model/forgotpasswordModel');
 
 
 
@@ -29,13 +31,15 @@ const adminRoute = require('./routes/adminRoutes');
 const userRoute = require('./routes/userRoutes');
 const orderRoute = require('./routes/purchaseRoutes');
 const premiumUserRoutes = require('./routes/premiumFeaturesRoutes')
+const PasswordRouter = require('./routes/resetPasswordRoutes')
 
 
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public/view/signup.html'));
+    res.sendFile(path.join(__dirname, 'public/view/login.html'));
 });
-  
+
+
 
 
 //registering routes to app
@@ -43,6 +47,7 @@ app.use(adminRoute);
 app.use(userRoute); 
 app.use(orderRoute); 
 app.use('/premium',premiumUserRoutes)
+app.use('/password',PasswordRouter)
 
 
 //Associations
@@ -51,6 +56,9 @@ Expense.belongsTo(User,{Constraints: true, onDelete: "CASCADE"});
 
 User.hasMany(Order,{foreignKey: 'usersTbId',sourceKey: 'id', onDelete:'CASCADE'})
 Order.belongsTo(User,{Constraints: true, onDelete: "CASCADE"})
+
+User.hasMany(Forgotpassword);
+Forgotpassword.belongsTo(User);
 
 
 

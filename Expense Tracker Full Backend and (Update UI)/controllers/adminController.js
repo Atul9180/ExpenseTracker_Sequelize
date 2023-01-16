@@ -4,8 +4,9 @@ const ExpenseTrackerModel = require('../model/expensesModel')
 //get all expenses
 exports.getAllExpenses = async (req,res)=>{
     try{
+        console.log("req.user: ",req.user)
         const allExpenses = await ExpenseTrackerModel.findAll({where: {usersTbId:req.user.userId}});
-        //console.log("passing id in controller:>> ",allExpenses)
+        console.log("passing id in controller:>> ",allExpenses)
         res.status(200).json({allExpenses : allExpenses})
     }catch(err){
         console.log('Error in fetching all expenses record with error: ',JSON.stringify(err))

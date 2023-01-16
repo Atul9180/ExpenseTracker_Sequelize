@@ -15,7 +15,7 @@ async function saveToDb(event) {
   try{
     const token = localStorage.getItem('token')
     const res = await axios.post("http://localhost:4000/admin/addNewExpense", obj,{headers:{Authorization:`${token}`}});
-      showexpenses(res.data.newAddedExpense);
+    showexpenses(res.data.newAddedExpense);
       document.getElementById("success-alert").innerText = "Expense added Successfully!"
       awakeSuccessAlert();
     }
@@ -66,8 +66,8 @@ function showLeaderBoard(){
     document.getElementById("leaderBoardTable").classList.toggle("hidden");
     leaderBoardData.data.forEach(leadersDetails => {
        leaderBoardElement.innerHTML += `<tr class=" text-sm hover:bg-gray-100">
-          <td class="py-2 px-3 border-b border-gray-400">${leadersDetails.users_tb.name}</td>
-          <td class="py-2 px-3 border-b border-gray-400"><span class="font-bold">&#x20b9; </span>${leadersDetails.aggregated_sum}</td>
+          <td class="py-2 px-3 border-b border-gray-400">${leadersDetails.name}</td>
+          <td class="py-2 px-3 border-b border-gray-400"><span class="font-bold">&#x20b9; </span>${leadersDetails.aggregate_amount}</td>
         </tr>`
     });;
     tableVisible = true;
@@ -106,6 +106,7 @@ window.addEventListener("DOMContentLoaded", async () => {
       premiumUserMsg();
       showLeaderBoard();
     }
+    document.getElementById("loggedName").innerHTML= `Welcome <span class="font-bold text-black-800" >${tokenDecoded.name}</span>!`;
     const res = await axios.get("http://localhost:4000/admin/getAllExpenses",{headers:{Authorization:`${token}`}});
       for (var i = 0; i < res.data.allExpenses.length; i++) 
               showexpenses(res.data.allExpenses[i]);
@@ -172,17 +173,20 @@ async function updateUser(expId) {
   const obj = { amount, description, category };
   try{
     const token = localStorage.getItem('token')
-    const res1 = await axios.put(`http://localhost:4000/admin/updateExpense/${expId}`,obj,{headers:{Authorization:`${token}`}});
+    const res1 = await axios.put(`http://localhost:4000/admin/updateExpense/${expId}`,obj,{headers:{Authorization:token}});
       if(res1){
       document.getElementById("success-alert").innerText="Expense Updation Successful.";
-      awakeSuccessAlert();
-      }
+      awakeSuccessAlert();      
       amount = "";
       description = "";
       category = "";
       document.querySelector("#addexpensebtn").style.display = "block";
       document.querySelector("#updateexpensebtn").style.display = "none";
       updateexpensebtn.removeAttribute("onclick");
+      }
+      else{
+        window.location.reload();
+      }
     }
     catch(err){
       console.log(err);
