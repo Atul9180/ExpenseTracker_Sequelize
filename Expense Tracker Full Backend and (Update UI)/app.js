@@ -13,6 +13,7 @@ const User =require('./model/usersModel')
 const Expense =require('./model/expensesModel')
 const Order = require('./model/ordersModel')
 const Forgotpassword = require('./model/forgotpasswordModel');
+const Downloads = require('./model/downloadedReportsModel');
 
 
 
@@ -22,7 +23,7 @@ app.use(cors())
 app.use(express.json())
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
-app.use("/js",express.static(path.join(__dirname, '/public/js')));
+//app.use("/js",express.static(path.join(__dirname, '/public/js')));
 
 
 
@@ -50,15 +51,26 @@ app.use('/premium',premiumUserRoutes)
 app.use('/password',PasswordRouter)
 
 
+app.use((req, res) => {
+    console.log('url is: ', req.url);
+    console.log('Req is succesful');
+    res.sendFile(path.join(__dirname, `public/${req.url}`));
+  })
+
+
+
 //Associations
-User.hasMany(Expense,{foreignKey: 'usersTbId', onDelete:'CASCADE'});
+User.hasMany(Expense,{foreignKey: 'usersTbId',sourceKey: 'id', onDelete:'CASCADE'});
 Expense.belongsTo(User,{Constraints: true, onDelete: "CASCADE"});
 
 User.hasMany(Order,{foreignKey: 'usersTbId',sourceKey: 'id', onDelete:'CASCADE'})
 Order.belongsTo(User,{Constraints: true, onDelete: "CASCADE"})
 
-User.hasMany(Forgotpassword);
-Forgotpassword.belongsTo(User);
+User.hasMany(Forgotpassword,{foreignKey: 'usersTbId',sourceKey: 'id', onDelete:'CASCADE'});
+Forgotpassword.belongsTo(User,{Constraints: true, onDelete: "CASCADE"});
+
+User.hasMany(Downloads,{foreignKey: 'usersTbId',sourceKey: 'id', onDelete:'CASCADE'})
+Downloads.belongsTo(User,{Constraints: true, onDelete: "CASCADE"})
 
 
 

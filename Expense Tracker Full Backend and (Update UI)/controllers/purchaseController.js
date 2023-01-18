@@ -27,6 +27,8 @@ exports.purchasePremium = async (req, res) => {
     }
 };
 
+
+
 exports.updateTransactionStatus = async (req, res) => {
     try {
         const userId = req.user.userId;

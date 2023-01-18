@@ -6,8 +6,7 @@ const nodemailer = require('nodemailer');
 const uuid = require('uuid');
 
 
-
-
+//FORGET PASSWORD FORM CONTROLLER ---SEND MAIL
 const forgotPassword =  async (req, res)=> {
         const { email } = req.body;
         try {
@@ -23,12 +22,12 @@ const forgotPassword =  async (req, res)=> {
             const transporter = nodemailer.createTransport({
                 service:'gmail',
                 auth: {
-                    user: 'lamoksolutions9@gmail.com',
-                    pass:'qumqkhefqggbwdje'
+                    user: process.env.EMAIL,
+                    pass: process.env.EMAIL_PASSWORD
                 }
             })
             const msg = {
-                from: 'lamoksolutions9@gmail.com',
+                from: process.env.EMAIL,
                 to: email,
                 subject:'Reset your ExpenseTracker Password',
                 html: `
@@ -38,7 +37,7 @@ const forgotPassword =  async (req, res)=> {
                     <p>If you did not request this, please ignore this email and your password will remain unchanged.</p>
                     `
               }
-            transporter.sendMail(msg, function(err,info){
+            await transporter.sendMail(msg, function(err,info){
                 if(err){
                     return console.log("Error occured in sending mail..",err);
                 }
@@ -49,7 +48,7 @@ const forgotPassword =  async (req, res)=> {
             }) 
              // gmail auth ====================
 
-                  return res.status(202).json({message: 'reset intiated email sent...Please Reset Passowrd using link in mail. ', sucess: true})
+                  return res.status(202).json({message: 'Reset intiated email sent...Please Reset Passowrd using link in mail. ', sucess: true})
             }
             else{
                throw new Error('Error in updating forget table')
@@ -63,10 +62,10 @@ const forgotPassword =  async (req, res)=> {
 
 
 
-
+//RESET LINK FORM METHOD VERIFY AND FIRE EVENT UPDATE
 const resetPassword = async (req, res) => {
     const id =  req.params.id;
-    console.log("params in link..line 86 reset mtd via link :",req.params)
+    //console.log("params in link..line 86 reset mtd via link :",req.params)
     const validUser = await ForgotModel.findOne({ where : { id , active:true}})
         if(validUser){
             validUser.update({ active: false});
@@ -74,7 +73,6 @@ const resetPassword = async (req, res) => {
                                     <script>
                                         function formsubmitted(e){
                                             e.preventDefault();
-                                            console.log('called')
                                         }
                                     </script>
 
@@ -86,18 +84,18 @@ const resetPassword = async (req, res) => {
                                 </html>`
                                 )
             res.end()
-
-        }
-        else{
-        console.log("user token invalid. Retry with new reset link.")
-            return res.json({message: "Invalid Link. retry with new password reset link."})
             
         }
-    
+        else{
+            console.log("user token invalid. Retry with new reset link.")
+            return res.status(404).json({message: "Invalid Link. retry with new password reset link."})
+        }    
 }
 
 
 
+
+//UPDATE PSWD
 const updatePassword = async (req, res) => {
     try {
         const { newpassword } = req.query;

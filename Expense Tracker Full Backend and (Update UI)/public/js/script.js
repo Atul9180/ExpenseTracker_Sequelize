@@ -48,18 +48,19 @@ function premiumUserMsg(){
 
 let tableVisible = false;
 function showLeaderBoard(){
+  document.getElementById('downloadReportBtn').classList.remove('hidden');
+
   var inputBtnElement = document.createElement("button")
   inputBtnElement.type = "button"
   inputBtnElement.id = "leaderbtn"
   inputBtnElement.innerText = "Show LeaderBoard"
-  inputBtnElement.className = "rounded-lg py-2  bg-[#3ebc96] text-white max-w-full px-8 hover:scale-105 duration-300 hover:bg-[#0d5f49] cursor-pointer"
+  inputBtnElement.className = "rounded-lg py-2  bg-[#3ebc96] text-white  px-3 hover:scale-105 duration-300 font-semibold m-1 hover:bg-[#0d5f49] cursor-pointer"
   
   inputBtnElement.onclick = async() =>{
     try{
     const token = localStorage.getItem('token')
     const leaderBoardData = await axios.get("http://localhost:4000/premium/showLeaderBoard",{headers:{Authorization: token}});
     //console.log(leaderBoardData.data)
-    
     var leaderBoardElement = document.getElementById("addedLeaderBoardlist")
   
   if(!tableVisible){
@@ -87,6 +88,45 @@ function showLeaderBoard(){
 }
 
 
+let downloadsView = false; 
+function showDownloadsHistory(){
+  var downloadsHistBtn = document.createElement("button")
+  downloadsHistBtn.type = "button"
+  downloadsHistBtn.id = "downloadshistbtn"
+  downloadsHistBtn.innerText = "Downloaded Reports"
+  downloadsHistBtn.className = "rounded-lg py-2  bg-[#3ebc96] text-white font-semibold  px-3 hover:scale-105 duration-300 m-1 hover:bg-[#0d5f49] cursor-pointer"
+  
+  downloadsHistBtn.onclick = async() =>{
+    try{
+    const token = localStorage.getItem('token')
+    const prevDownloadsData = await axios.get("http://localhost:4000/premium/showPrevDownloads",{headers:{Authorization: token}});
+       var downloadedElement = document.getElementById("addedDownloadlist")
+  
+  if(!downloadsView){
+    document.getElementById("downloadsTable").classList.toggle("hidden");
+    prevDownloadsData.data.prevDownloads.forEach(downloadsDetail => {
+      const d = new Date(`${downloadsDetail.createdAt}`);
+      downloadedElement.innerHTML += `<tr class=" text-sm hover:bg-gray-100">
+          <td class="py-2 px-3 border-b border-gray-400"><a href='${downloadsDetail.fileUrl}'>${d.toUTCString()}</a></td>
+        </tr>`
+    });
+    downloadsView = true;
+  }
+  else{
+    document.getElementById("downloadsTable").classList.toggle("hidden");
+    downloadedElement.innerHTML = "";
+      downloadsView = false;
+  }
+  }
+  catch(error){
+    console.log(error)
+    throw new Error(error)
+  }
+}
+  document.getElementById("leaderBtnHolder").appendChild(downloadsHistBtn);
+}
+
+
 
 
 
@@ -99,12 +139,12 @@ window.addEventListener("DOMContentLoaded", async () => {
     const premiumMember = tokenDecoded.ispremiumuser;
 
     if(!token){
-      alert("You need to Login first..!")
       return window.location.href='../view/login.html'
     }
     if(premiumMember){
       premiumUserMsg();
       showLeaderBoard();
+      showDownloadsHistory();
     }
     document.getElementById("loggedName").innerHTML= `Welcome <span class="font-bold text-black-800" >${tokenDecoded.name}</span>!`;
     const res = await axios.get("http://localhost:4000/admin/getAllExpenses",{headers:{Authorization:`${token}`}});
@@ -187,22 +227,23 @@ async function updateUser(expId) {
       else{
         window.location.reload();
       }
+      try{
+        const token = localStorage.getItem('token')
+        const result2 = await axios.get(`http://localhost:4000/admin/getExpenseById/${expId}`,{headers:{"Authorization":token}})
+        console.log("result2.data is: ",result2.data.updatedUserExpense)      
+        showexpenses(result2.data.updatedUserExpense);
+        }
+        catch(err){
+              console.log(err);
+              document.querySelector('.error-textMsg').innerText=`Server error- ${err} ,in getting updated data. Please Refresh the Page.`;
+              document.querySelector('#error-alert').classList.toggle("hidden")
+            }
     }
     catch(err){
       console.log(err);
       document.querySelector('.error-textMsg').innerText=`Server error- ${err} ,in updating data. Please Refresh the Page.`;
       document.querySelector('#error-alert').classList.toggle("hidden")
     }
-  try{
-    const token = localStorage.getItem('token')
-    const result2 = await axios.get(`http://localhost:4000/admin/getExpenseById/${expId}`,{headers:{Authorization:`${token}`}})
-          showexpenses(result2.data.updatedUserExpense);
-    }
-    catch(err){
-          console.log(err);
-          document.querySelector('.error-textMsg').innerText=`Server error- ${err} ,in getting updated data. Please Refresh the Page.`;
-          document.querySelector('#error-alert').classList.toggle("hidden")
-        }
   }
 
 
@@ -260,7 +301,8 @@ document.getElementById("buyPremiumBtn").addEventListener("click", async functio
         premiumUserMsg();
         alert('Your Premium Membership is now active'); 
         localStorage.setItem('token',res.data.token)
-        showLeaderBoard();      
+        showLeaderBoard();  
+        showDownloadsHistory();    
         //window.location.reload(); 
       }
       catch (err) {
@@ -289,6 +331,33 @@ document.getElementById("buyPremiumBtn").addEventListener("click", async functio
     throw new Error(err);
   }
 });
+
+
+
+//downloadreport mtd
+async function downloadReport(){
+try{
+  const token =localStorage.getItem('token')
+  const response = await axios.get("http://localhost:4000/premium/downloadExpensesReport",{headers: {"Authorization":token}});
+  if(response.status === 200){
+            const link = document.createElement("a");
+            link.href = response.data.fileUrl;
+            link.download = 'ExpenseReport.json';
+            link.click();
+  }
+  else{
+    console.log("issue in fetching report.");
+    throw new Error(`Facing some issue. Try after Sometime.. ${response.data.message}`)
+  }
+  }
+  catch(err){
+    console.log("error in fetching report from server. ",err)
+    document.querySelector('.error-textMsg').innerText=`Server error- ${err.message} ,in Downloading report. Please Retry after sometime.`;
+    document.querySelector('#error-alert').classList.toggle("hidden")
+  }
+}
+
+
 
   
 //logout

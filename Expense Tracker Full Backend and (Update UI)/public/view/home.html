@@ -17,9 +17,12 @@
   <div class="container flex items-center  max-w-[1500px] mx-auto bg-green-200 py-3 mb-5 rounded-lg">
     <div class=" md:w-1/2"><h1 class="text-center text-xl font-bold animate-bounce">Expense Tracker</h1></div>
     <div class="text-center" id="loggedName"></div>
-    <div class="w-full text-end"><button id="buyPremiumBtn" type="submit" class="p-1 mr-5 px-2 bg-blue-400 rounded-md shadow-md hover:bg-blue-900 text-white font-medium">Buy Premium</button>
-      <span class="p-1 mr-5 px-4 text-blue-700  font-bold" id="memtype"></span>
-    <button id="logoutBtn"  class=" p-1 mr-5 px-2 bg-red-400 rounded-md shadow-md hover:bg-red-900 text-white font-medium" type="button">Logout</button></div>
+    <div class="w-full text-end">
+      <button id="buyPremiumBtn" type="submit" class="p-1 m-1 px-2 bg-blue-400 rounded-md shadow-md hover:bg-blue-900 text-white font-medium">Buy Premium</button>
+      <span class="p-1 px-4 text-blue-700  font-bold" id="memtype"></span>
+      <button id="downloadReportBtn" onclick="downloadReport()" class="hidden p-1 mr-5 px-2 bg-green-700 rounded-md shadow-md text-white font-medium hover:bg-green-400  ">Download</button>
+    <button id="logoutBtn"  class=" p-1 m-1 mr-6 px-2 bg-red-400 rounded-md shadow-md hover:bg-red-900 text-white font-medium" type="button">Logout</button>
+  </div>
   </div>
 
   <!--  main container -->
@@ -72,8 +75,9 @@
       </form>
 
       <!-- leaderboard btn -->
-      <div id="leaderBtnHolder" class="text-center mt-4 mb-4">
+      <div id="leaderBtnHolder" class=" w-full text-center mt-4">
         <!-- <input class="rounded-lg py-2  bg-[#3ebc96] text-white max-w-full px-8 hover:scale-105 duration-300 hover:bg-[#0d5f49] cursor-pointer" id="leaderBoardBtn" value="Show LeaderBoard" type="button"> -->
+        <!-- showDownload Btn -->
       </div>
       
       <!-- Success alert -->
@@ -126,8 +130,8 @@
 
   
   <!--- Premium user Feature Leader Board -->
-  
-  <div class="container w-full mt-6 md:w-2/3 lg:w-2/3 xl:w-2/3 p-4  mx-auto hidden " id="leaderBoardTable">
+  <div class="container w-full flex">
+  <div class="container w-full mt-5 md:w-1/2 p-4  mx-auto hidden " id="leaderBoardTable">
     <!-- Leader Board Table -->
      <div class="text-center rounded-t-md bg-green-300 p-1 font-bold " id="leadermsg">LeaderBoard</div>
      <table class="w-full shadow-xl rounded mx-auto ">
@@ -144,6 +148,23 @@
         </tr>   -->
        </tbody>
     </table> 
+    </div>
+
+    <div class="container w-full mt-5 md:w-1/2 p-4 ml-2 mx-auto hidden " id="downloadsTable">
+      <div class="text-center rounded-t-md bg-green-300 p-1 font-bold " >Downloads History</div>
+      <table class="w-full shadow-xl rounded mx-auto ">
+       <thead>
+         <tr class="bg-gray-300 text-[#002D74] font-bold text-sm">
+           <th class="py-2 px-2 border-b border-gray-400">Downloaded On</th>
+         </tr>
+       </thead>
+       <tbody class="text-center" id="addedDownloadlist"> 
+           <!-- <tr class=" text-sm hover:bg-gray-100">
+           <td class="py-2 px-3 border-b border-gray-400"><span class="font-bold">&#x20b9; </span>567</td>
+         </tr>   -->
+        </tbody>
+     </table>
+    </div>
     </div> 
 </div>
 

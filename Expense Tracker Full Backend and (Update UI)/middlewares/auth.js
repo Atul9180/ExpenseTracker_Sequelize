@@ -13,7 +13,7 @@ exports.authenticate =async (req,res,next)=>{
         const token = req.header('Authorization');
         if(!token) { return res.status(401).json({ message: 'Unauthorized. No token provided.' }); }
         const user = jwt.verify(token,secret)
-        console.log("decrypted token: ",user)
+        //console.log("decrypted token: ",user)
 
         const result =await User.findByPk(user.userId)
         if(result){
