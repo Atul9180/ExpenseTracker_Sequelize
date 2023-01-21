@@ -1,3 +1,4 @@
+
 document.getElementById("login-form").addEventListener("submit", (e) => {
   e.preventDefault();
   const email = e.target.email.value;
@@ -25,7 +26,7 @@ async function authenticateLogin(email, password) {
       alert(response.data.message);
       localStorage.setItem('token',response.data.token)            
       // Redirect to home page
-     window.location.href = "/public/view/home.html";
+     window.location.href = "/view/home.html";
     } else {
       throw new Error("Error in credentials");
     }

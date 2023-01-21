@@ -2,41 +2,40 @@ const ExpenseTrackerModel = require('../model/expensesModel')
  
 
 //get all expenses
-//exports.getAllExpenses = async (req,res)=>{
-  //  try{
-    //    const allExpenses = await //ExpenseTrackerModel.findAll({where: //{usersTbId:req.user.userId}});
-  //      res.status(200).json({allExpenses : allExpenses})
-    //}catch(err){
-      //  console.log('Error in fetching all expenses record with error: ',JSON.stringify(err))
-//        res.status(500).json({error: err})
-  //  } 
-//}
+exports.getAllExpenses = async (req,res)=>{
+    try{
+        const allExpenses = await ExpenseTrackerModel.findAll({where: {usersTbId:req.user.userId}});
+        res.status(200).json({allExpenses : allExpenses})
+    }catch(err){
+        console.log('Error in fetching all expenses record with error: ',JSON.stringify(err))
+        res.status(500).json({error: err})
+    } 
+}
 
+// exports.getAllExpenses = async (req, res) => {
+//     try {
+//         const page = parseInt(req.query.page) || 2;
+//         const limit = parseInt(req.query.limit) || 3;
+//         const offset = (page - 1) * limit;
+//         const allExpenses = await ExpenseTrackerModel.findAll({
+//             where: { usersTbId: req.user.userId },
+//             limit: limit,
+//             offset: offset,
+//             order: [["updatedAt", "DESC"]]
+//         });
+//         const totalExpenses = await ExpenseTrackerModel.count({
+//             where: { usersTbId: req.user.userId }
+//         });
+//        // console.log("total expenses are as 'totalExpenses': ", totalExpenses)
+//         const pages = Math.ceil(totalExpenses / limit);
+//        // console.log("total 'pages'= ",pages)
+//         res.status(200).json({ allExpenses: allExpenses, pages: pages });
+//     } catch (err) {
+//         console.log("Error in fetching expenses from server: ", err);
+//         res.status(500).json({ error: err });
+//     }
+// };
 
-//getAllExpenses
-exports.getAllExpenses = async (req, res) => {
-    try {
-        const page = parseInt(req.query.page) || 2;
-        const limit = parseInt(req.query.limit) || 3;
-        const offset = (page - 1) * limit;
-        const allExpenses = await ExpenseTrackerModel.findAll({
-            where: { usersTbId: req.user.userId },
-            limit: limit,
-            offset: offset,
-            order: [["updatedAt", "DESC"]]
-        });
-        const totalExpenses = await ExpenseTrackerModel.count({
-            where: { usersTbId: req.user.userId }
-        });
-       // console.log("total expenses are as 'totalExpenses': ", totalExpenses)
-        const pages = Math.ceil(totalExpenses / limit);
-       // console.log("total 'pages'= ",pages)
-        res.status(200).json({ allExpenses: allExpenses, pages: pages });
-    } catch (err) {
-        console.log("Error in fetching expenses from server: ", err);
-        res.status(500).json({ error: err });
-    }
-};
 
 
 

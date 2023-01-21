@@ -7,7 +7,6 @@ const sequelize = require('./utils/database')
 const path = require('path')
 
 
-
 //models
 const User =require('./model/usersModel')
 const Expense =require('./model/expensesModel')
@@ -22,8 +21,7 @@ const Downloads = require('./model/downloadedReportsModel');
 app.use(cors())
 app.use(express.json())
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(express.static(path.join(__dirname, 'public')));
-//app.use("/js",express.static(path.join(__dirname, '/public/js')));
+app.use(express.static('public'));
 
 
 
@@ -50,12 +48,6 @@ app.use(orderRoute);
 app.use('/premium',premiumUserRoutes)
 app.use('/password',PasswordRouter)
 
-
-app.use((req, res) => {
-    console.log('url is: ', req.url);
-    console.log('Req is succesful');
-    res.sendFile(path.join(__dirname, `public/${req.url}`));
-  })
 
 
 
