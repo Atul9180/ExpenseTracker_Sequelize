@@ -23,11 +23,15 @@ window.addEventListener("DOMContentLoaded",async ()=>{
     const res = await axios.get("http://localhost:4000/admin/getAllExpenses",{headers:{Authorization:`${token}`}});
     expenseList =res.data.allExpenses;
     
-    let pageLimit = 5;
+    let pageLimit = parseInt(localStorage.getItem("pageLimit")) || 5;
     let currentPage = 1;
     let prevPageButton = document.getElementById("prevPage");
     let nextPageButton = document.getElementById("nextPage");
     let pageNumberContainer = document.getElementById("pageNumber");
+    let pageLimitInput = document.getElementById("pageLimit");
+    let savePageLimitButton = document.getElementById("savePageLimit");
+    
+    pageLimitInput.value = pageLimit;
 
     function displayExpenses() {
       document.getElementById("addedexpenselist").innerHTML = "";
@@ -55,6 +59,19 @@ window.addEventListener("DOMContentLoaded",async ()=>{
       currentPage++;
       displayExpenses();
   });  
+  savePageLimitButton.addEventListener("click", function() {
+    let newPageLimit = parseInt(pageLimitInput.value);
+    if (newPageLimit > 0 && newPageLimit<= expenseList.length) {
+        pageLimit = newPageLimit;
+        localStorage.setItem("pageLimit", pageLimit);
+        currentPage = 1;
+        displayExpenses();
+    }
+    else{
+      alert(`Expense range allowed is minimum: 1 and maximum: ${expenseList.length}`)
+      return ;
+    }
+});
   displayExpenses();         
   }
   catch(err) {

@@ -134,8 +134,12 @@
             <button id="nextPage"
               class="px-3 py-1 ml-0  bg-white border border-gray-300 rounded-r-lg shadow-md hover:bg-green-300  hover:text-white font-semibold">Next</button>
               <span class="text-gray-500 font-serif ml-2">showing <span id="showingcurrPage"></span> of <span id="showingRange"></span></span>
-            </div>
-          
+           
+              <label class="text-right font-medium mr-2" for="pageLimit">Expenses per page:</label>
+              <input type="number" id="pageLimit" class="w-10 py-1 px-1 text-gray-600 border border-gray-400 rounded-sm" min="1" paceholder="5">
+              <button id="savePageLimit" class="px-3 py-1 ml-0  bg-white border border-gray-300 rounded-r-lg shadow-md hover:bg-green-300  hover:text-white font-semibold">Save</button>
+            
+            </div>          
         </div>
         <!-- PAGINATION -->
 
