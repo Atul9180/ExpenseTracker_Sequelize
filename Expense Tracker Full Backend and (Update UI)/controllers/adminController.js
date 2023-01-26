@@ -12,34 +12,8 @@ exports.getAllExpenses = async (req,res)=>{
     } 
 }
 
-// exports.getAllExpenses = async (req, res) => {
-//     try {
-//         const page = parseInt(req.query.page) || 2;
-//         const limit = parseInt(req.query.limit) || 3;
-//         const offset = (page - 1) * limit;
-//         const allExpenses = await ExpenseTrackerModel.findAll({
-//             where: { usersTbId: req.user.userId },
-//             limit: limit,
-//             offset: offset,
-//             order: [["updatedAt", "DESC"]]
-//         });
-//         const totalExpenses = await ExpenseTrackerModel.count({
-//             where: { usersTbId: req.user.userId }
-//         });
-//        // console.log("total expenses are as 'totalExpenses': ", totalExpenses)
-//         const pages = Math.ceil(totalExpenses / limit);
-//        // console.log("total 'pages'= ",pages)
-//         res.status(200).json({ allExpenses: allExpenses, pages: pages });
-//     } catch (err) {
-//         console.log("Error in fetching expenses from server: ", err);
-//         res.status(500).json({ error: err });
-//     }
-// };
 
 
-
-
-//getExpenseById
 exports.getExpenseById = async (req, res) => {
     try {
       const { id } = req.params;
@@ -64,11 +38,11 @@ exports.getExpenseById = async (req, res) => {
 //addNew Expense Post Request
 exports.addNewExpense = async (req,res)=>{
     try{
-        const {amount ,description, category} = req.body;
+        const {amount ,description, category , amountType} = req.body;
         const usersTbId = req.user.userId;
         if(!amount || !description || !category){ throw new Error('all fields mandatory')}
         const newExpense = await ExpenseTrackerModel.create({  
-            amount ,description, category,usersTbId       
+            amount ,description, category, amountType ,usersTbId       
         }) 
         res.status(201).json({newAddedExpense:newExpense})
     }
@@ -77,6 +51,7 @@ exports.addNewExpense = async (req,res)=>{
         res.status(err.status || 500).json({error: err.message || err})
     } 
 }
+
 
 
 
@@ -105,11 +80,11 @@ exports.deleteExpense = async (req,res)=>{
 //update expense
 exports.updateExpense = async (req,res)=>{
     try{
-        const {amount ,description, category} = req.body;
+        const {amount ,description, category, amountType} = req.body;
         const { id } = req.params;
         if(!id){ return res.status(400).json({error: 'Expense Id is missing for update.'})}
         if(!amount || !description || !category){ throw new Error('all fields mandatory')}
-        const result = await ExpenseTrackerModel.update({ amount ,description, category }, { 
+        const result = await ExpenseTrackerModel.update({ amount ,description, category ,amountType}, { 
             returning:true, 
             where: {id, usersTbId:req.user.userId} 
         });

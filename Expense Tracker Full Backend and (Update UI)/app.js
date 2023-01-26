@@ -1,10 +1,15 @@
 const express = require('express')
 const app = express()
 require('dotenv').config()
-var cors = require('cors')
+const cors = require('cors')
+const fs = require('fs');
 const bodyParser =require('body-parser')
 const sequelize = require('./utils/database')
 const path = require('path')
+const helmet =require('helmet');
+const morgan = require('morgan');
+
+
 
 
 //models
@@ -16,15 +21,6 @@ const Downloads = require('./model/downloadedReportsModel');
 
 
 
-
-//middlewares
-app.use(cors())
-app.use(express.json())
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(express.static('public'));
-
-
-
 //importing routes
 const adminRoute = require('./routes/adminRoutes');
 const userRoute = require('./routes/userRoutes');
@@ -32,6 +28,19 @@ const orderRoute = require('./routes/purchaseRoutes');
 const premiumUserRoutes = require('./routes/premiumFeaturesRoutes')
 const PasswordRouter = require('./routes/resetPasswordRoutes')
 
+
+//log file
+const accessLogstream = fs.createWriteStream(path.join(__dirname,'access.log'),{flags:'a'});
+
+
+
+//middlewares
+app.use(cors());
+app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.static('public'));
+app.use(helmet());
+app.use(morgan('combined',{stream:accessLogstream}))
 
 
 app.get('/', (req, res) => {
@@ -67,7 +76,7 @@ Downloads.belongsTo(User,{Constraints: true, onDelete: "CASCADE"})
 
 
 sequelize.sync()
-    .then(res=>{ app.listen(process.env.PORT) })
+    .then(res=>{ app.listen(process.env.PORT || 4000) })
     .catch(err=>console.log("error in connection..",err))
 
 

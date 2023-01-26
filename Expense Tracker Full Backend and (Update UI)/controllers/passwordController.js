@@ -65,24 +65,35 @@ const forgotPassword =  async (req, res)=> {
 //RESET LINK FORM METHOD VERIFY AND FIRE EVENT UPDATE
 const resetPassword = async (req, res) => {
     const id =  req.params.id;
-    //console.log("params in link..line 86 reset mtd via link :",req.params)
     const validUser = await ForgotModel.findOne({ where : { id , active:true}})
         if(validUser){
             validUser.update({ active: false});
             res.status(200).send(`<html>
+                                    <head>
+                                    <title>Expense Tracker</title>
+                                        <script src="https://cdn.tailwindcss.com"></script>
+                                    </head>
+                                    <body>
                                     <script>
                                         function formsubmitted(e){
                                             e.preventDefault();
                                         }
                                     </script>
 
-                                    <form action="/password/updatepassword/${id}" method="get">
-                                        <label for="newpassword">Enter New password</label>
-                                        <input name="newpassword" type="password" required></input>
-                                        <button>Reset Password</button>
+                                    <form action="/password/updatepassword/${id}" method="get" class="w-screen h-screen grid place-items-center">
+                                        
+                                        <div class="flex items-center border-b border-teal-500 py-2">
+                                            <label for="newpassword">Enter New password</label><br>
+                                            <input class="appearance-none bg-transparent border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none" type="password" placeholder="***********" name="newpassword" required />
+                                            <button class="flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded" >
+                                            Reset Password
+                                            </button>
+                                        </div>
                                     </form>
+                                    </body>
                                 </html>`
                                 )
+
             res.end()
             
         }
@@ -120,7 +131,7 @@ const updatePassword = async (req, res) => {
                             }
                             user.update({ password: hash }).then(() => {
                                 res.status(201).json({message: 'Successfuly updated the new password. Please login using new Password.'})
-                                return alert("Please login using new Password..")
+                                return ;
                             })
                         });
                     });

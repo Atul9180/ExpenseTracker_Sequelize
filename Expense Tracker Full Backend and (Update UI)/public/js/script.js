@@ -19,7 +19,7 @@ window.addEventListener("DOMContentLoaded",async ()=>{
         showLeaderBoard();
         showDownloadsHistory();
       }
-    document.getElementById("loggedName").innerHTML= `Welcome <span class="font-bold text-black-800" >${tokenDecoded.name}</span>!`;
+    document.getElementById("loggedName").innerHTML= `Welcome<span class=" font-extrabold text-[#002D74]"> ${tokenDecoded.name}</span>`;
     const res = await axios.get("http://localhost:4000/admin/getAllExpenses",{headers:{Authorization:`${token}`}});
     expenseList =res.data.allExpenses;
     
@@ -85,26 +85,46 @@ window.addEventListener("DOMContentLoaded",async ()=>{
 
 // showexpenses
 async function showexpenses(expenseItem) {
+  try{
   document.getElementById("addexpenseinput").value = "";
   document.getElementById("addexpensedescription").value = "";
   document.getElementById("addexpensecategory").value = "";
-  const addedexpenselist = document.getElementById("addedexpenselist");
-  try{
-    const html = `<tr id="${expenseItem.id}" class="text-gray-600 text-sm hover:bg-gray-100">
-      <td class="py-2 px-3 border-b border-gray-400">Rs ${expenseItem.amount}</td>
-      <td class="py-2 px-3 border-b border-gray-400">${expenseItem.description}</td>
-      <td class="py-2 px-3 border-b border-gray-400">${expenseItem.category}</td>
-      <td class="py-2 px-3 border-b border-gray-400 flex items-center justify-center">
-      <button onclick="editexpense('${expenseItem.id}','${expenseItem.amount}','${expenseItem.description}','${expenseItem.category}')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded mr-2 "><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4">
+  document.getElementById('expenseRadio').checked = false;
+  document.getElementById('incomeRadio').checked = false;
+  
+    const d = new Date(`${expenseItem.updatedAt}`);
+    let expen='';
+    let incom='';
+    if(expenseItem.amountType==='expense'){
+      expen=expenseItem.amount
+      incom=0
+    }
+    else if(expenseItem.amountType==='income'){
+      incom=expenseItem.amount
+      expen=0
+    }
+    const addedexpenselist = document.getElementById("addedexpenselist");
+    const html = `
+      <tr id="${expenseItem.id}" class="text-gray-600 text-sm hover:bg-gray-100">
+      <td class="py-2 px-1 border-b border-gray-500"><span class="font-bold">&#x20b9; </span> ${incom}</td>
+      <td class="py-2 px-1 border-b border-gray-400"><span class="font-bold">&#x20b9; </span> ${expen}</td>
+      <td class="py-2 px-1 border-b border-gray-400">${expenseItem.description}</td>
+      <td class="py-2 px-1 border-b border-gray-400">${expenseItem.category}</td>
+      <td class="py-2 px-1 border-b border-gray-400">${d.toDateString()}</td>
+     <td class="py-2  border-b border-gray-400">
+      <button onclick="editexpense('${expenseItem.id}','${expenseItem.amount}','${expenseItem.description}','${expenseItem.category}','${expenseItem.amountType}')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded "><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4">
       <path d="M5.433 13.917l1.262-3.155A4 4 0 017.58 9.42l6.92-6.918a2.121 2.121 0 013 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 01-.65-.65z" />
       <path d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0010 3H4.75A2.75 2.75 0 002 5.75v9.5A2.75 2.75 0 004.75 18h9.5A2.75 2.75 0 0017 15.25V10a.75.75 0 00-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5z" />
     </svg>
     </button>
-      <button onclick="deleteexpense('${expenseItem.id}')" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded  "><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+    
+    <button onclick="deleteexpense('${expenseItem.id}')" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 mt-1  rounded  "><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
       <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5m6 4.125l2.25 2.25m0 0l2.25 2.25M12 13.875l2.25-2.25M12 13.875l-2.25 2.25M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
     </svg>
     </button>
-      </td>
+    
+    </td>
+   
     </tr>`;
   addedexpenselist.innerHTML += html;
 }
@@ -120,10 +140,11 @@ catch(err){
 //Adding new Expenses to Db
 async function saveToDb(event) {
   event.preventDefault();
+  let amountType = document.querySelector('input[name="amountType"]:checked').value;
   let amount = event.target.addexpenseinput.value;
   let description = event.target.addexpensedescription.value;
   let category = event.target.addexpensecategory.value;
-  const obj = { amount, description, category };
+  const obj = { amount, description, category , amountType };
   try{
     const token = localStorage.getItem('token')
     const res = await axios.post("http://localhost:4000/admin/addNewExpense", obj,{headers:{Authorization:`${token}`}});
@@ -155,7 +176,7 @@ function parseJwt (token) {
 //Premium user Message:
 function premiumUserMsg(){
   document.getElementById("buyPremiumBtn").remove();
-  document.getElementById("memtype").innerText = "You are a premium member now";
+  document.getElementById("memtype").innerText = "Premium Member";
 }
 
 
@@ -214,9 +235,9 @@ function showDownloadsHistory(){
   downloadsHistBtn.onclick = async() =>{
     try{
     const token = localStorage.getItem('token')
-    const prevDownloadsData = await axios.get("http://localhost:4000/premium/showPrevDownloads",{headers:{Authorization: token}});
+    const prevDownloadsData = await axios.get("http://localhost:4000/premium/showPrevDownloads",{headers:{"Authorization": token}});
        var downloadedElement = document.getElementById("addedDownloadlist")
-  
+    console.log({downloadsScript:prevDownloadsData.data.prevDownloads})
   if(!downloadsView){
     document.getElementById("downloadsTable").classList.toggle("hidden");
     prevDownloadsData.data.prevDownloads.forEach(downloadsDetail => {
@@ -243,10 +264,15 @@ function showDownloadsHistory(){
 
 
 // editexpense
-function editexpense(expId, expAmount, expDesc, expCat) {
+function editexpense(expId, expAmount, expDesc, expCat , expType) {
   addexpenseinput.value = expAmount;
   addexpensedescription.value = expDesc;
   addexpensecategory.value = expCat;
+  if (expType === 'income') {
+    document.getElementById('incomeRadio').checked = true;
+  } else {
+    document.getElementById('expenseRadio').checked = true;
+  }
   removeExpenseFromScreen(expId);
   document.querySelector("#addexpensebtn").style.display = "none";
   document.querySelector("#updateexpensebtn").style.display = "block";
@@ -260,7 +286,8 @@ async function updateUser(expId) {
   let amount = addexpenseinput.value;
   let description = addexpensedescription.value;
   let category = addexpensecategory.value;
-  const obj = { amount, description, category };
+  let amountType = document.querySelector('input[name="amountType"]:checked').value;
+  const obj = { amount, description, category,amountType };
   const token = localStorage.getItem('token')
   try{    
     const res1 = await axios.put(`http://localhost:4000/admin/updateExpense/${expId}`,obj,{headers:{Authorization:token}});
@@ -445,3 +472,10 @@ function awakeDeletedAlert(){
         document.getElementById("deletion-alert").classList.toggle("hidden");
       }, 1500);
 }
+
+//navbar hide/show
+const btn = document.querySelector("button.mobile-menu-button");
+const menu = document.querySelector(".mobile-menu");
+btn.addEventListener("click", () => {
+  menu.classList.toggle("hidden");
+});

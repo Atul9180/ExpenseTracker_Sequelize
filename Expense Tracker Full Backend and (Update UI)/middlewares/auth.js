@@ -18,7 +18,6 @@ exports.authenticate =async (req,res,next)=>{
         const result =await User.findByPk(user.userId)
         if(result){
             req.user=user;
-           // console.log("ddata in req.user: ",req.user)
             next();
         }
         else{

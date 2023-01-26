@@ -1,4 +1,3 @@
-
 document.getElementById("login-form").addEventListener("submit", (e) => {
   e.preventDefault();
   const email = e.target.email.value;

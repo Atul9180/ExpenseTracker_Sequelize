@@ -43,7 +43,6 @@ const authenticateUserController = async (req, res) => {
     if (!email || !password) {
       return res.status(400).json({ message: "All fields are mandatory" });
     }
-
     const user = await UserModel.findOne({ where: { email } });
     if (user) {
       await bcrypt.compare(password, user.password, (hasherr, hashresponse) => {
