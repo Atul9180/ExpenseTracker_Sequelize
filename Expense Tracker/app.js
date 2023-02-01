@@ -1,5 +1,6 @@
 const express = require('express')
 const app = express()
+require('dotenv').config();
 var cors = require('cors')
 const bodyParser =require('body-parser')
 const sequelize = require('./utils/database')
@@ -17,37 +18,15 @@ app.use(express.static(path.join(__dirname, 'public')));
 const adminRoute = require('./routes/adminRoutes');
 
 
-
 //registering routes to app
 app.use(adminRoute); 
+
+app.get('/',(req,res)=>{
+    res.sendFile(path.join(__dirname,'public/view/home.html'))
+})
 
 
 sequelize.sync()
     .then(res=>{ app.listen(4000)})
     .catch(err=>console.log(err))
 
-
-
-
-
-
-
-
-    //TEST PURPOSE
-
-// sequelize
-//   .sync() 
-//     .then(result=>{  
-//         return ExpenseTrackerModel.findByPk(1)  
-//     })
-//     .then(expense=>{
-//         if(!user){
-//            return ExpenseTrackerModel.create({amount:'11111',description:'atul@gmail.com',category:'Fuel'});
-//         }
-//         return expense;
-//     })
-//     .then(expense=>{
-//         console.log(expense)
-//         app.listen(4000)
-//     })
-//     .catch(err=>console.log(err))

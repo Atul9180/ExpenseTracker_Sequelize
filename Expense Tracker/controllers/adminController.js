@@ -33,14 +33,10 @@ exports.getExpenseById = async (req,res)=>{
 //addNew Expense Post Request
 exports.addNewExpense = async (req,res)=>{
     try{
-        const amount = req.body.amount;
-        const description = req.body.description;
-        const category = req.body.category;
+        const {amount ,description, category} = req.body;       
         if(!amount || !description || !category){ throw new Error('all fields mandatory')}
         const newExpense = await ExpenseTrackerModel.create({
-            amount:amount,
-            description:description,
-            category:category            
+            amount ,description, category         
         }) 
         res.status(201).json({newAddedExpense:newExpense})
     }
@@ -59,7 +55,7 @@ exports.deleteExpense = async (req,res)=>{
             console.log('Delete Id of deleting expense missing ')
             return res.status(400).json({error:'Delete Id is missing while deleting.'})
         }
-        const deleteResult = await ExpenseTrackerModel.destroy({ where: {id:uid}})
+        const delres = await ExpenseTrackerModel.destroy({ where: {id:uid}})
             res.sendStatus(200)
     }
     catch(err){
@@ -72,19 +68,12 @@ exports.deleteExpense = async (req,res)=>{
 //update expense
 exports.updateExpense = async (req,res)=>{
     try{
-        const amount = req.body.amount;
-        const description = req.body.description;
-        const category = req.body.category;
+        const {amount ,description, category} = req.body;
         const uid = req.params.id;
         if(!uid){ return res.status(422).json({error: 'Id to be updated is incorrect so, it cannot be updated'})}
         if(!amount || !description || !category){ throw new Error('all fields mandatory')}
-        const result = await ExpenseTrackerModel.update({
-            amount:amount,
-            description:description,
-            category:category         
-             },
-             {returning:true, where: {id:uid}}
-        )
+        const result = await ExpenseTrackerModel.update({ amount ,description, category },
+                          { returning:true, where: {id:uid} })
         res.sendStatus(200)         
     }
     catch(err){

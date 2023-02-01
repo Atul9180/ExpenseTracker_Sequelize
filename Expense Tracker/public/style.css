@@ -3,6 +3,10 @@
   padding: 0;
   box-sizing: border-box;
 }
+#header{
+  margin: 13px;
+  text-align: center;
+}
 .expensesform {
   display: flex;
   justify-content: center;
@@ -16,11 +20,17 @@ table #addedexpenselist {
 }
 button .text-primary {
   margin: auto 2px auto 8px;
+  margin-bottom: 8px;
 }
 #tableitems {
-  margin-left: auto;
-  margin-right: auto;
+  margin:10px auto;
+  max-height:70vh;
+  overflow-y: scroll;
+  scroll-behavior: smooth;
   width: fit-content;
+  border:1px solid gray;
+  box-shadow: 5px 7px 7px 4px rgb(184, 189, 181);
+
 }
 .btn-success {
   margin-top: 15px;

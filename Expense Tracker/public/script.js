@@ -1,4 +1,3 @@
-
 let addexpenseinput = document.getElementById("addexpenseinput");
 let addexpensedescription=document.getElementById("addexpensedescription");
 let addexpensecategory=document.getElementById("addexpensecategory");
