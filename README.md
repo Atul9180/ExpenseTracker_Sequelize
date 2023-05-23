@@ -16,3 +16,13 @@ Nodejs , Express Framework , MySql, Sequelize ORM, AWS S3 Bucket, Razorpay Payme
 ## Tip: 
 install nodemon for auto restart of project so as you need not to restart server after each change.
 To install and run nodemon: npm run dev
+
+## Impact on Society:
+The Expense Tracker web application brings significant value to individuals and society as a whole by promoting financial awareness, budgeting, and responsible spending. It empowers users to gain control over their expenses, make informed financial decisions, and develop healthy financial habits. By providing a convenient and secure platform, the application aims to improve financial literacy and contribute to individuals' overall financial well-being.
+
+## Future Improvements:
+To further enhance the Expense Tracker, future improvements can include:
+Implementing data visualization and analytics features to offer users insights into their spending patterns.
+Introducing expense category classification and analysis to identify areas of potential savings.
+Integrating personalized budgeting recommendations and goal-setting features.
+Expanding mobile application compatibility for greater accessibility.
