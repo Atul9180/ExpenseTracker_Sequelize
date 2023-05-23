@@ -13,12 +13,24 @@ Nodejs , Express Framework , MySql, Sequelize ORM, AWS S3 Bucket, Razorpay Payme
 3. Initialize the project: npm i
 4. Run project:  npm start
 
-## Tip: 
-install nodemon for auto restart of project so as you need not to restart server after each change.
-To install and run nodemon: npm run dev
+## Installation
+1. Clone the repository:
+   ```shell
+   git clone https://github.com/Atul9180/ExpenseTracker_Sequelize.git
+2. Navigate to the project directory:
+    ```shell
+    cd ExpenseTracker_Sequelize
+3. Install the dependencies:
+    ```shell
+    npm install
+4. Start the development serve:
+    ```shell
+    npm run dev
 
-## An Alternate version of the Expense Tracker was developed, utilizing MongoDB as the NoSQL database and Mongoose ODM for seamless integration. This version retains all the features of the MySQL-based version. 
+## Alternate version: 
+An Alternate Version of the Expense Tracker was developed, utilizing MongoDB as the NoSQL database and Mongoose ODM for seamless integration. This version retains all the features of the MySQL-based version. 
 Url: https://github.com/Atul9180/Mongoose__ExpenseTracker
+
 ## Impact on Society:
 The Expense Tracker web application brings significant value to individuals and society as a whole by promoting financial awareness, budgeting, and responsible spending. It empowers users to gain control over their expenses, make informed financial decisions, and develop healthy financial habits. By providing a convenient and secure platform, the application aims to improve financial literacy and contribute to individuals' overall financial well-being.
 
